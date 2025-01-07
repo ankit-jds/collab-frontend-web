@@ -28,11 +28,11 @@ const useWebSocket = (url, options = {}) => {
         setIsConnected(false);
         if (onClose) onClose(socket);
 
-        // if (reconnect) {
-        //   reconnectTimeoutRef.current = setTimeout(() => {
-        //     connectWebSocket();
-        //   }, reconnectInterval);
-        // }
+        if (reconnect) {
+          reconnectTimeoutRef.current = setTimeout(() => {
+            connectWebSocket();
+          }, reconnectInterval);
+        }
       };
 
       socket.onmessage = (event) => {
