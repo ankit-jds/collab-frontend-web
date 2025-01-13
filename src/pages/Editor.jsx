@@ -1,17 +1,25 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "../components/Header";
 import { useDocumentAPI } from "../hooks/useDocumentAPI";
 import useWebSocket from "../hooks/useWebsocket";
+import { useDispatch } from "react-redux";
+import { navigateTo } from "../redux/slice/navigatorSlice";
 
-const Editor = () => {
+export const EditorPage = () => {
   const {
     data: documentData,
     isLoading: isLoading1,
     error: error1,
   } = useDocumentAPI({ documentId: 5 });
-  const [content, setContent] = useState("");
+
+  const storedValue = localStorage.getItem("content");
+  const initialContentState = storedValue ? JSON.parse(storedValue) : "";
+
+  const [content, setContent] = useState(initialContentState);
   const inputRef = useRef(null);
-  const deltasRef = useRef([]);
+
+  const deltasValue = localStorage.getItem("delta");
+  const deltasRef = useRef(deltasValue ? JSON.parse(deltasValue) : []);
   const timeoutRef = useRef([]);
   const user = 12;
   const DEBOUNCE_DELAY = 500;
@@ -21,8 +29,11 @@ const Editor = () => {
     onOpen: () => console.log("websocket connected"),
     onClose: () => console.log("websocket disconnected"),
     onMessage: (message) => {
-      console.log(message, typeof message, "websocket message aaya hai");
-      if (typeof message === "object") {
+      if (
+        typeof message === "object" &&
+        Array.isArray(deltasRef.current) &&
+        deltasRef.current.length === 0
+      ) {
         setContent(message?.content);
       } else {
         // apply operations code here...
@@ -54,6 +65,12 @@ const Editor = () => {
   //     });
   //   }
   // }, [debouncedText]);
+
+  useEffect(() => {
+    if (content) {
+      localStorage.setItem("content", JSON.stringify(content));
+    }
+  }, [content]);
 
   const handleChange = (e) => {
     const newValue = e.target.value;
@@ -88,6 +105,9 @@ const Editor = () => {
     if (delta) {
       // Store the delta in the ref (batched)
       deltasRef.current.push(delta);
+      if (deltasRef.current) {
+        localStorage.setItem("delta", JSON.stringify(deltasRef.current));
+      }
 
       // Clear the existing timeout if there's already one (debouncing)
       if (timeoutRef.current) {
@@ -102,32 +122,51 @@ const Editor = () => {
           type: "document_update",
           message: deltasRef.current,
         }); // Send all collected deltas
-        deltasRef.current = []; // Clear the deltas after sending
+        console.log("why this printing....");
+
+        if (deltasRef.current && isConnected) {
+          deltasRef.current = []; // Clear the deltas after sending
+          localStorage.setItem("delta", JSON.stringify(deltasRef.current));
+        }
       }, DEBOUNCE_DELAY);
     }
 
     setContent(newValue);
   };
 
+  const dispatch = useDispatch();
+
   if (isLoading1) return <div>Loading...</div>;
   if (error1) return <div>Error in API 1: {error1.message}</div>;
 
   return (
     <div className="flex flex-col h-lvh">
-      <Header documentNameProp={documentData?.data?.name} />
-      <div>websocket : {isConnected ? "CONNECTED✅" : "DISCONNECTED❌"}</div>
-      <div className="flex-grow p-10">
-        <textarea
-          className="h-full w-full border p-2 resize-none"
-          type="text"
-          value={content}
-          placeholder={"Start Typing..."}
-          ref={inputRef}
-          onChange={handleChange}
-        ></textarea>
+      <div onClick={() => dispatch(navigateTo("login"))}>GO TO LOGIN</div>
+      <div>
+        <Header documentNameProp={documentData?.data?.name} />
+      </div>
+      <div className="relative h-full flex flex-col">
+        {isConnected ? (
+          ""
+        ) : (
+          <div className="w-max inline p-2 text-white bg-slate-800 rounded self-center absolute">
+            Trying to reconnect🔄
+          </div>
+        )}
+        <div className="flex-grow p-10 pt-4">
+          <textarea
+            className={`h-full w-full border p-2 resize-none rounded ${
+              isConnected ? "" : "bg-gray-300"
+            }`}
+            type="text"
+            value={content}
+            placeholder={"Start Typing..."}
+            ref={inputRef}
+            onChange={handleChange}
+            disabled={isConnected ? false : true}
+          ></textarea>
+        </div>
       </div>
     </div>
   );
 };
-
-export default Editor;

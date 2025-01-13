@@ -1,7 +1,15 @@
-const Login = () => {
+import { useDispatch } from "react-redux";
+import { useCreateDocument } from "../hooks/useCreateDocument";
+import { navigateTo } from "../redux/slice/navigatorSlice";
+
+export const LoginPage = () => {
+  const dispatch = useDispatch();
   const background = "#123123";
+  const { mutate, isLoading, isError, error, isSuccess } = useCreateDocument();
+
   return (
     <div className="">
+      <div onClick={() => dispatch(navigateTo("editor"))}>GO TO EDITOR</div>
       <div className="flex flex-col w-1/2 mx-auto">
         <div className="font-mono font-bold text-5xl mb-10">Login</div>
         <div className="flex flex-col w-full mx-auto gap-2">
@@ -31,8 +39,14 @@ const Login = () => {
               }
             }}
           />
-          {/* <input /> */}
-          <button className="p-2 rounded bg-white text-black font-semibold  border   hover:bg-slate-50 transition-colors">
+          <button
+            className="p-2 rounded bg-white text-black font-semibold  border   hover:bg-slate-50 transition-colors"
+            onClick={() => {
+              console.log("lplp");
+              alert("Working on this...");
+            }}
+            disabled={isLoading}
+          >
             LOG IN
           </button>
           <div className="my-6 relative">
@@ -47,13 +61,17 @@ const Login = () => {
               </span>
             </div>
           </div>
-          <button className="p-2 rounded bg-gray-950 text-white font-semibold outline-3 outline-red-500 hover:bg-gray-800 transition-colors">
-            Log In as Guest
+          <button
+            className="p-2 rounded bg-gray-950 text-white font-semibold outline-3 outline-red-500 hover:bg-gray-800 transition-colors"
+            onClick={() => {
+              console.log("lplp");
+              mutate({ documentName: "DUMMY" });
+            }}
+          >
+            {isLoading ? "Logging..." : "Log In as Guest"}
           </button>
         </div>
       </div>
     </div>
   );
 };
-
-export default Login;

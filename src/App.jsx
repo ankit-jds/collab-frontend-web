@@ -1,16 +1,9 @@
-import Editor from "./pages/Editor";
-import { QueryClient, QueryClientProvider } from "react-query";
-import Login from "./pages/Login";
-
-const queryClient = new QueryClient();
+import { Routing } from "./routing/routing";
 
 function App() {
   return (
     <>
-      <QueryClientProvider client={queryClient}>
-        <Login />
-        {/* <Editor /> */}
-      </QueryClientProvider>
+      <Routing />
     </>
   );
 }
