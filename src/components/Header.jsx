@@ -1,6 +1,6 @@
-import { UserRound, AlignLeft } from "lucide-react";
+import { UserRound, AlignLeft, UserRoundPlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-
+import { logo } from "../assets";
 const Header = ({ documentNameProp = "Testing" }) => {
   const [documentName, setDocumentName] = useState(documentNameProp);
   const [documentNameInputWidth, setDocumentNameInputWidth] = useState(
@@ -13,12 +13,23 @@ const Header = ({ documentNameProp = "Testing" }) => {
       setDocumentNameInputWidth(`${spanRef.current?.offsetWidth || 50}px`);
     }
   }, [documentName]);
+  let iconHeight = "32px";
+  let iconWidth = iconHeight;
   return (
-    <div className="relative flex justify-between gap-4 p-3 overflow-hidden">
+    <div className="relative flex justify-between items-center gap-4 px-3 py-2 overflow-hidden ">
       {/* below is basic user icon */}
-      <div className="flex-shrink-0 border-2 border-black cursor-pointer">
-        <AlignLeft />
-      </div>
+      {logo ? (
+        <img
+          className="rounded-full"
+          src={logo}
+          style={{ height: "40px", fill: "#64748b" }}
+          alt={"logo"}
+        ></img>
+      ) : (
+        <div className="flex-shrink-0 border-2 border-black cursor-pointer">
+          <AlignLeft />
+        </div>
+      )}
       <>
         <span
           ref={spanRef}
@@ -35,7 +46,7 @@ const Header = ({ documentNameProp = "Testing" }) => {
           {documentName || "Placeholder"} {/* Fallback for empty input */}
         </span>
         <input
-          className={`px-2`}
+          className={`px-2 rounded outline-[#0c9696]`}
           style={{
             // width: `${documentName.length + 2}ch`,
             width: documentNameInputWidth,
@@ -55,11 +66,26 @@ const Header = ({ documentNameProp = "Testing" }) => {
       </>
 
       {/* this div is left side of the header */}
-      <div className="ms-auto">
+      <div className="ms-auto flex justify-center items-center gap-3">
         {/* below is basic user icon */}
-        <div className=" border-2 border-black rounded-full cursor-pointer">
-          <UserRound />
-        </div>
+        {0 === 0 ? (
+          <>
+            <div
+              className={`bg-[#0c9696] p-1.5 rounded-full h-[${iconHeight}] w-[${iconWidth}] flex justify-center items-center`}
+            >
+              <UserRoundPlus />
+            </div>
+            <div
+              className={`w-[${iconWidth}] h-[${iconHeight}] flex items-center justify-center text-white bg-green-800 rounded-full `}
+            >
+              A
+            </div>
+          </>
+        ) : (
+          <div className=" border-2 border-black rounded-full cursor-pointer">
+            <UserRound />
+          </div>
+        )}
       </div>
     </div>
   );
