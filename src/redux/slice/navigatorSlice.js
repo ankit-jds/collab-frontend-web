@@ -9,7 +9,7 @@ const initialState = {
     transitionText: `Transitioning...`,
     // delay in milliseconds (ms), not seconds.
     // 1 second = 1000 milliseconds.
-    transitionTime: 5000,
+    transitionTime: 1000,
   },
 };
 
@@ -19,6 +19,7 @@ const navigatorSlice = createSlice({
   reducers: {
     navigateTo: (state, action) => {
       state.activeComponent = action.payload;
+      state.isTransitioning = false;
     },
     transitionTo: (state, action) => {
       const { transitionComponent, endComponent, transitionText } =

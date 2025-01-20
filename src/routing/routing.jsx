@@ -15,8 +15,10 @@ export const Routing = () => {
     (state) => state.navigator.transitionPayload
   );
   if (isTransitioning) {
-    console.log(transitionPayload, "....");
+    // console.log(transitionPayload, "....");
     setTimeout(() => {
+      console.log("hy inside settimeout...");
+
       dispatch(navigateTo(transitionPayload?.endComponent));
     }, [transitionPayload?.transitionTime]);
   }

@@ -1,22 +1,15 @@
 import { useDispatch } from "react-redux";
-import { useCreateDocument } from "../hooks/useCreateDocument";
-import { navigateTo, transitionTo } from "../redux/slice/navigatorSlice";
+// import { useCreateDocument } from "../hooks/useCreateDocument";
+import { transitionTo } from "../redux/slice/navigatorSlice";
 import { hero } from "../assets";
 
 export const LoginPage = () => {
   const dispatch = useDispatch();
-  const background = "#123123";
-  const { mutate, isLoading, isError, error, isSuccess } = useCreateDocument();
+  // const background = "#123123";
+  // const { mutate, isLoading, isError, error, isSuccess } = useCreateDocument();
 
   return (
     <div className="">
-      {/* <div onClick={() => dispatch(navigateTo("editor"))}>GO TO EDITOR</div>
-      <div
-        className="text-lg bg-red-800"
-        onClick={() => dispatch(transitionTo({ endComponent: "end" }))}
-      >
-        GO TO EDITOR BY TRANSTION
-      </div> */}
       <div className="flex">
         <div className="overflow-hidden flex justify-center items-center">
           <img
@@ -61,7 +54,7 @@ export const LoginPage = () => {
                 console.log("lplp");
                 alert("Working on this...");
               }}
-              disabled={isLoading}
+              // disabled={isLoading}
             >
               LOG IN
             </button>
@@ -84,13 +77,13 @@ export const LoginPage = () => {
                 // mutate({ documentName: "DUMMY" });
                 dispatch(
                   transitionTo({
-                    endComponent: "end",
+                    endComponent: "username",
                     transitionText: "Logging you in...",
                   })
                 );
               }}
             >
-              {isLoading ? "Logging..." : "Log In as Guest"}
+              {"Log In as Guest"}
             </button>
           </div>
         </div>

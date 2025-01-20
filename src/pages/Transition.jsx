@@ -2,15 +2,15 @@ import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 
 export const TransitionPage = () => {
-  const isTransitioning = useSelector(
-    (state) => state.navigator.isTransitioning
-  );
+  // const isTransitioning = useSelector(
+  //   (state) => state.navigator.isTransitioning
+  // );
   const transitionPayload = useSelector(
     (state) => state.navigator.transitionPayload
   );
-  if (isTransitioning) {
-    console.log(transitionPayload, "....");
-  }
+  // if (isTransitioning) {
+  //   console.log(transitionPayload, "....");
+  // }
 
   // for the animation
   const [transitionText, setTransitionText] = useState(

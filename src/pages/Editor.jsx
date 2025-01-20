@@ -1,16 +1,41 @@
 import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import Header from "../components/Header";
 import { useDocumentAPI } from "../hooks/useDocumentAPI";
+import { useCreateDocument } from "../hooks/useCreateDocument";
 import useWebSocket from "../hooks/useWebsocket";
-import { useDispatch } from "react-redux";
 import { navigateTo } from "../redux/slice/navigatorSlice";
+import { setDocumentMetadata } from "../redux/slice/editorSlice";
 
 export const EditorPage = () => {
+  const dispatch = useDispatch();
+
+  const documentId = useSelector((state) => state.editor.documentId);
+  const documentName = useSelector((state) => state.editor.documentName);
   const {
     data: documentData,
-    isLoading: isLoading1,
-    error: error1,
-  } = useDocumentAPI({ documentId: 5 });
+    isLoading: FetchDocumentLoading,
+    error: fetchDocumentError,
+  } = useDocumentAPI({ documentId: documentId, documentName: documentName });
+
+  const {
+    mutate: createDocument,
+    isLoading: createDocumentLoading,
+    // isError,
+    // error,
+    // isSuccess,
+    data: res,
+  } = useCreateDocument();
+
+  useEffect(() => {
+    if (documentId === null && !createDocumentLoading) {
+      createDocument();
+      console.log(res, documentId, "res");
+
+      dispatch(setDocumentMetadata({ documentName: "123", documentId: "456" }));
+    }
+  }, []);
 
   const storedValue = localStorage.getItem("content");
   const initialContentState = storedValue ? JSON.parse(storedValue) : "";
@@ -134,10 +159,10 @@ export const EditorPage = () => {
     setContent(newValue);
   };
 
-  const dispatch = useDispatch();
-
-  if (isLoading1) return <div>Loading...</div>;
-  if (error1) return <div>Error in API 1: {error1.message}</div>;
+  if (FetchDocumentLoading) return <div>Fetching Document...</div>;
+  if (fetchDocumentError)
+    return <div>Error in Fetching Document: {fetchDocumentError.message}</div>;
+  if (createDocumentLoading) return <div>Creating Document...</div>;
 
   return (
     <div className="flex flex-col h-lvh">
