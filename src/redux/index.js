@@ -1,15 +1,38 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage"; // Local storage as default
+import { combineReducers } from "redux";
 
 import navigatorReducer from "./slice/navigatorSlice";
 import userReducer from "./slice/userSlice";
 import editorReducer from "./slice/editorSlice";
 
-const store = configureStore({
-  reducer: {
-    navigator: navigatorReducer, // Add your slice reducer(s) here
-    user: userReducer,
-    editor: editorReducer,
-  },
+// Configuring redux-persist
+const persistConfig = {
+  key: "root", // Key name for persistence
+  storage, // You can change the storage method (e.g., sessionStorage)
+};
+
+const rootReducer = combineReducers({
+  navigator: navigatorReducer,
+  user: userReducer,
+  editor: editorReducer,
 });
 
-export default store;
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+// Setting up the store with the persisted reducer
+const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["persist/PERSIST"], // Ignore actions from redux-persist
+        ignoredPaths: ["register"], // Ignore the register path specifically
+      },
+    }),
+});
+
+const persistor = persistStore(store);
+
+export { store, persistor };
