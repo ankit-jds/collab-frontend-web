@@ -7,6 +7,7 @@ import { useCreateDocument } from "../hooks/useCreateDocument";
 import useWebSocket from "../hooks/useWebsocket";
 import { navigateTo } from "../redux/slice/navigatorSlice";
 import { setDocumentMetadata } from "../redux/slice/editorSlice";
+import { useQRCode } from "../hooks/useQRCode";
 
 export const EditorPage = () => {
   const dispatch = useDispatch();
@@ -31,11 +32,22 @@ export const EditorPage = () => {
   useEffect(() => {
     if (documentId === null && !createDocumentLoading) {
       createDocument();
-      console.log(res, documentId, "res");
-
-      dispatch(setDocumentMetadata({ documentName: "123", documentId: "456" }));
     }
   }, []);
+
+  useEffect(() => {
+    if (res || documentData) {
+      let r = res || documentData;
+      console.log(r, r?.data?.name, "res");
+
+      dispatch(
+        setDocumentMetadata({
+          documentName: r?.data?.name,
+          documentId: r?.data?.id,
+        })
+      );
+    }
+  }, [res, documentData]);
 
   const storedValue = localStorage.getItem("content");
   const initialContentState = storedValue ? JSON.parse(storedValue) : "";
@@ -49,7 +61,9 @@ export const EditorPage = () => {
   const user = 12;
   const DEBOUNCE_DELAY = 500;
 
-  const wsurl = documentData ? `ws://127.0.0.1:8420/ws/document/5/` : null;
+  const wsurl = documentId
+    ? `ws://192.168.1.24:8420/ws/document/${documentId}/`
+    : null;
   const { isConnected, sendMessage } = useWebSocket(wsurl, {
     onOpen: () => console.log("websocket connected"),
     onClose: () => console.log("websocket disconnected"),
@@ -99,7 +113,7 @@ export const EditorPage = () => {
 
   const handleChange = (e) => {
     const newValue = e.target.value;
-    const prevValue = content;
+    const prevValue = content || "";
     const cursorPosition = inputRef.current.selectionStart;
     let delta = null;
 
@@ -163,26 +177,44 @@ export const EditorPage = () => {
   if (fetchDocumentError)
     return <div>Error in Fetching Document: {fetchDocumentError.message}</div>;
   if (createDocumentLoading) return <div>Creating Document...</div>;
-
+  // colors
+  var text_area_enabled = "#FFFAD7";
+  var text_area_disabled = "#FCDDB0";
+  var toast = "#E97777";
+  var header = "#FF9F9F";
+  //
   return (
-    <div className="flex flex-col h-lvh">
-      <div onClick={() => dispatch(navigateTo("login"))}>GO TO LOGIN</div>
-      <div>
-        <Header documentNameProp={documentData?.data?.name} />
+    <div className="flex flex-col h-lvh" style={{ backgroundColor: header }}>
+      {/* <div onClick={() => dispatch(navigateTo("login"))}>GO TO LOGIN</div> */}
+      <div
+        style={{
+          backgroundColor: header,
+          // boxShadow: "10px 10px 20px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Header documentNameProp={documentName} />
       </div>
       <div className="relative h-full flex flex-col">
         {isConnected ? (
           ""
         ) : (
-          <div className="w-max inline p-2 text-white bg-slate-800 rounded self-center absolute">
+          <div
+            className="w-max inline p-2 text-black rounded self-center absolute"
+            style={{ backgroundColor: toast }}
+          >
             Trying to reconnect🔄
           </div>
         )}
         <div className="flex-grow p-10 pt-4">
           <textarea
             className={`h-full w-full border p-2 resize-none rounded ${
-              isConnected ? "" : "bg-gray-300"
+              isConnected ? "" : ""
             }`}
+            style={{
+              backgroundColor: isConnected
+                ? text_area_enabled
+                : text_area_disabled,
+            }}
             type="text"
             value={content}
             placeholder={"Start Typing..."}

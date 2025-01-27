@@ -1,10 +1,24 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Components } from ".";
 import { navigateTo } from "../redux/slice/navigatorSlice";
+import { useEffect } from "react";
+import { setDocumentId } from "../redux/slice/editorSlice";
 
 export const Routing = () => {
   let ac = useSelector((state) => state.navigator.activeComponent);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const id = urlParams.get("id");
+    if (id) {
+      console.log(id, "lplplplplp");
+
+      dispatch(setDocumentId(id));
+      window.location.href = "/";
+    }
+  }, []);
 
   const ActiveComponent = Components[ac];
 

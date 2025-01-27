@@ -14,7 +14,10 @@ const useWebSocket = (url, options = {}) => {
   const reconnectTimeoutRef = useRef(null);
 
   useEffect(() => {
-    if (!url) return;
+    console.log(socketRef.current, url, "44544");
+    if (!url || socketRef.current) return;
+    console.log(socketRef.current, url, "plplppo");
+
     const connectWebSocket = () => {
       const socket = new WebSocket(url);
       socketRef.current = socket;
@@ -24,12 +27,16 @@ const useWebSocket = (url, options = {}) => {
         if (onOpen) onOpen(socket);
       };
 
-      socket.onclose = () => {
+      socket.onclose = (event) => {
+        console.log(event, "lplo");
+
         setIsConnected(false);
         if (onClose) onClose(socket);
 
         if (reconnect) {
           reconnectTimeoutRef.current = setTimeout(() => {
+            console.log("yeh ho raha hai");
+
             connectWebSocket();
           }, reconnectInterval);
         }
@@ -43,19 +50,20 @@ const useWebSocket = (url, options = {}) => {
         if (onError) onError(error);
       };
     };
-
-    connectWebSocket();
-
+    if (!socketRef.current) {
+      connectWebSocket();
+    }
     return () => {
       console.log("WebSocket readyState:", socketRef.current.readyState);
       if (socketRef.current) {
         socketRef.current.close();
         socketRef.current = null;
+        clearTimeout(reconnectTimeoutRef.current); // Clear the reconnect timeout
       }
       //   clearTimeout(reconnectTimeoutRef.current);
     };
     //   }, [url, onOpen, onClose, onMessage, onError, reconnect, reconnectInterval]);
-  }, [url]);
+  }, []);
 
   const sendMessage = (message) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {

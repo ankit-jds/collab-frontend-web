@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  documentId: null,
-  documentName: null,
+  documentId: 205,
+  documentName: "",
   operations: [],
 };
 
@@ -14,10 +14,8 @@ const editorSlice = createSlice({
       state.documentId = action.payload;
     },
     setDocumentMetadata: (state, action) => {
-      console.log(action, "789");
-
-      // state.documentId = action?.payload?.documentId;
-      // state.documentName = action?.payload?.documentName;
+      state.documentId = action?.payload?.documentId;
+      state.documentName = action?.payload?.documentName;
     },
   },
 });

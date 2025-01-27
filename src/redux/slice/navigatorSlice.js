@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  activeComponent: "login",
+  activeComponent: "editor",
   isTransitioning: false,
   transitionPayload: {
     transitionComponent: "transition",
