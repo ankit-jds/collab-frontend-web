@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Components } from ".";
-import { navigateTo } from "../redux/slice/navigatorSlice";
+import { navigateTo, transitionTo } from "../redux/slice/navigatorSlice";
 import { useEffect } from "react";
 import { setDocumentId } from "../redux/slice/editorSlice";
 
@@ -16,6 +16,12 @@ export const Routing = () => {
       console.log(id, "lplplplplp");
 
       dispatch(setDocumentId(id));
+      dispatch(
+        transitionTo({
+          endComponent: "editor",
+          transitionText: "Logging you in...",
+        })
+      );
       window.location.href = "/";
     }
   }, []);

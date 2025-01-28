@@ -109,7 +109,7 @@ const Header = ({
             <Modal show={isModalOpen} onClose={closeModal}>
               <div className={`p-5`} style={{ width: "400px" }}>
                 <h2 className={`font-semibold text-xl`}>
-                  Share {`"${documentName}"`}
+                  Share {`"${documentName} ${documentId}"`}
                 </h2>
                 <div className={`py-2`}>
                   <h3>People currently active</h3>

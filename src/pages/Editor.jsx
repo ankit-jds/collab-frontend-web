@@ -6,7 +6,10 @@ import { useDocumentAPI } from "../hooks/useDocumentAPI";
 import { useCreateDocument } from "../hooks/useCreateDocument";
 import useWebSocket from "../hooks/useWebsocket";
 import { navigateTo } from "../redux/slice/navigatorSlice";
-import { setDocumentMetadata } from "../redux/slice/editorSlice";
+import {
+  setDocumentContent,
+  setDocumentMetadata,
+} from "../redux/slice/editorSlice";
 import { useQRCode } from "../hooks/useQRCode";
 
 export const EditorPage = () => {
@@ -14,6 +17,7 @@ export const EditorPage = () => {
 
   const documentId = useSelector((state) => state.editor.documentId);
   const documentName = useSelector((state) => state.editor.documentName);
+  const documentContent = useSelector((state) => state.editor.documentContent);
   const {
     data: documentData,
     isLoading: FetchDocumentLoading,
@@ -38,7 +42,6 @@ export const EditorPage = () => {
   useEffect(() => {
     if (res || documentData) {
       let r = res || documentData;
-      console.log(r, r?.data?.name, "res");
 
       dispatch(
         setDocumentMetadata({
@@ -49,10 +52,10 @@ export const EditorPage = () => {
     }
   }, [res, documentData]);
 
-  const storedValue = localStorage.getItem("content");
-  const initialContentState = storedValue ? JSON.parse(storedValue) : "";
+  // const storedValue = localStorage.getItem("content");
+  const initialContentState = documentContent;
 
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(initialContentState);
   const inputRef = useRef(null);
 
   const deltasValue = localStorage.getItem("delta");
@@ -68,10 +71,17 @@ export const EditorPage = () => {
   function deleteAt(str, position) {
     return str.slice(0, position) + str.slice(position + 1);
   }
+  const [wsurl, setWsurl] = useState(null);
+  // const wsurl = documentId
+  //   ? `ws://192.168.1.16:8420/ws/document/${documentId}/`
+  //   : null;
+  useEffect(() => {
+    if (documentId)
+      setWsurl(
+        documentId ? `ws://192.168.1.16:8420/ws/document/${documentId}/` : null
+      );
+  }, [documentId]);
 
-  const wsurl = documentId
-    ? `ws://192.168.1.16:8420/ws/document/${documentId}/`
-    : null;
   const { isConnected, sendMessage } = useWebSocket(wsurl, {
     onOpen: () => console.log("websocket connected"),
     onClose: () => console.log("websocket disconnected"),
@@ -80,11 +90,8 @@ export const EditorPage = () => {
         if (Array.isArray(message)) {
           function setTextHelper(prev, message) {
             prev = [(undefined, null, 0)].includes(prev) === true ? "" : prev;
-            console.log(message, prev, "lplp");
 
             message.forEach((value, index) => {
-              console.log(value, prev, "vl");
-
               if (value?.operation == "INSERT") {
                 prev = insertAt(prev, value?.character, value?.position);
               }
@@ -93,14 +100,13 @@ export const EditorPage = () => {
               }
             });
 
-            console.log(prev, "lploprevprev");
-
             return prev;
           }
           setContent((prev) => setTextHelper(prev, message));
         }
-        if (message?.content) {
+        console.log(message, "mesese");
 
+        if (message?.content) {
           setContent(message ? message?.content : "");
         }
       } catch {
@@ -148,10 +154,11 @@ export const EditorPage = () => {
   // }, [debouncedText]);
 
   useEffect(() => {
-    if (content) {
+    if (content !== documentContent) {
       localStorage.setItem("content", JSON.stringify(content));
+      dispatch(setDocumentContent(content));
     }
-  }, [content]);
+  }, [content, documentContent, dispatch]);
 
   const handleChange = (e) => {
     const newValue = e.target.value;
@@ -168,7 +175,6 @@ export const EditorPage = () => {
         position: cursorPosition - 1,
         userid: user,
       };
-      console.log(delta, "here it is...");
 
       // sendDelta(delta);
     } else if (newValue.length < prevValue.length) {
@@ -203,7 +209,6 @@ export const EditorPage = () => {
           type: "document_update",
           message: deltasRef.current,
         }); // Send all collected deltas
-        console.log("why this printing....");
 
         if (deltasRef.current && isConnected) {
           deltasRef.current = []; // Clear the deltas after sending
