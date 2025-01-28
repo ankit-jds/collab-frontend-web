@@ -52,7 +52,7 @@ export const EditorPage = () => {
   const storedValue = localStorage.getItem("content");
   const initialContentState = storedValue ? JSON.parse(storedValue) : "";
 
-  const [content, setContent] = useState(initialContentState);
+  const [content, setContent] = useState("");
   const inputRef = useRef(null);
 
   const deltasValue = localStorage.getItem("delta");
@@ -61,23 +61,65 @@ export const EditorPage = () => {
   const user = 12;
   const DEBOUNCE_DELAY = 500;
 
+  function insertAt(str, char, position) {
+    return str.slice(0, position) + char + str.slice(position);
+  }
+
+  function deleteAt(str, position) {
+    return str.slice(0, position) + str.slice(position + 1);
+  }
+
   const wsurl = documentId
-    ? `ws://192.168.1.24:8420/ws/document/${documentId}/`
+    ? `ws://192.168.1.16:8420/ws/document/${documentId}/`
     : null;
   const { isConnected, sendMessage } = useWebSocket(wsurl, {
     onOpen: () => console.log("websocket connected"),
     onClose: () => console.log("websocket disconnected"),
     onMessage: (message) => {
-      if (
-        typeof message === "object" &&
-        Array.isArray(deltasRef.current) &&
-        deltasRef.current.length === 0
-      ) {
-        setContent(message?.content);
-      } else {
-        // apply operations code here...
-        console.log(message, "operations has arrived");
+      try {
+        if (Array.isArray(message)) {
+          function setTextHelper(prev, message) {
+            prev = [(undefined, null, 0)].includes(prev) === true ? "" : prev;
+            console.log(message, prev, "lplp");
+
+            message.forEach((value, index) => {
+              console.log(value, prev, "vl");
+
+              if (value?.operation == "INSERT") {
+                prev = insertAt(prev, value?.character, value?.position);
+              }
+              if (value?.operation == "DELETE") {
+                prev = deleteAt(prev, value?.position);
+              }
+            });
+
+            console.log(prev, "lploprevprev");
+
+            return prev;
+          }
+          setContent((prev) => setTextHelper(prev, message));
+        }
+        if (message?.content) {
+
+          setContent(message ? message?.content : "");
+        }
+      } catch {
+        console.error("Error while parsing the message data...");
       }
+
+      // if (
+      //   typeof message === "object" &&
+      //   Array.isArray(deltasRef.current) &&
+      //   deltasRef.current.length === 0
+      // ) {
+      //   console.log("yeh bhi run hora hai...");
+
+      //   setContent(message?.content);
+      //   console.log("kyu run hora hai...");
+      // } else {
+      //   // apply operations code here...
+      //   console.log(message, "operations has arrived");
+      // }
     },
     onError: (error) => console.log(error, "websocket error"),
   });
