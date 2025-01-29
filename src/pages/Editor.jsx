@@ -5,12 +5,10 @@ import Header from "../components/Header";
 import { useDocumentAPI } from "../hooks/useDocumentAPI";
 import { useCreateDocument } from "../hooks/useCreateDocument";
 import useWebSocket from "../hooks/useWebsocket";
-import { navigateTo } from "../redux/slice/navigatorSlice";
 import {
   setDocumentContent,
   setDocumentMetadata,
 } from "../redux/slice/editorSlice";
-import { useQRCode } from "../hooks/useQRCode";
 
 export const EditorPage = () => {
   const dispatch = useDispatch();

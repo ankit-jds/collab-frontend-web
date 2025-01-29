@@ -1,12 +1,10 @@
 import { useState } from "react";
-import useWebSocket from "../hooks/useWebsocket";
-import { useQRCode } from "../hooks/useQRCode";
 
 export const QrLogin = () => {
   const DEBOUNCE_DELAY = 500;
 
-  const wsurl = `ws://127.0.0.1:8420/ws/connect/`;
-  const [qrImage, setQrImage] = useState("");
+  // const wsurl = `ws://127.0.0.1:8420/ws/connect/`;
+  // const [qrImage, setQrImage] = useState("");
 //   const { isConnected, sendMessage } = useWebSocket(wsurl, {
 //     onOpen: () => console.log("websocket connected"),
 //     onClose: () => console.log("websocket disconnected"),

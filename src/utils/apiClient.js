@@ -6,7 +6,8 @@ const apiClient = async (
   url,
   options = {},
   // baseURL = "http://127.0.0.1:8420/"
-  baseURL = "http://192.168.1.16:8420/"
+  // baseURL = "http://192.168.1.16:8420/"
+  baseURL = process.env.BACKEND_API_URL
 ) => {
   const token = getAuthToken();
 
