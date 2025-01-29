@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Header from "../components/Header";
 import { useDocumentAPI } from "../hooks/useDocumentAPI";
 import { useCreateDocument } from "../hooks/useCreateDocument";
-import useWebSocket from "../hooks/useWebsocket";
+import useWebSocket from "../hooks/useWebSocket";
 import {
   setDocumentContent,
   setDocumentMetadata,
