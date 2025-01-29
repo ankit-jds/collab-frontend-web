@@ -15,8 +15,16 @@ const apiClient = async (
     Authorization: token ? `Bearer ${token}` : "",
     ...options.headers,
   };
+  let queryString = "";
 
-  const response = await fetch(`${baseURL}${url}`, {
+  if (options?.params) {
+    queryString = new URLSearchParams(options?.params).toString();
+  }
+  let fullUrl = queryString
+    ? `${baseURL}${url}?${queryString}`
+    : `${baseURL}${url}`;
+
+  const response = await fetch(fullUrl, {
     ...options,
     headers,
   });
