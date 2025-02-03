@@ -18,11 +18,11 @@ export const Routing = () => {
       dispatch(setDocumentId(id));
       dispatch(
         transitionTo({
-          endComponent: "editor",
+          endComponent: "username",
           transitionText: "Logging you in...",
         })
       );
-      window.location.href = "/";
+      // window.location.href = "/";
     }
   }, []);
 

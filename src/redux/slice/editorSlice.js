@@ -5,6 +5,7 @@ const initialState = {
   documentName: "",
   documentContent: "",
   operations: [],
+  users: [],
 };
 
 const editorSlice = createSlice({
@@ -21,9 +22,16 @@ const editorSlice = createSlice({
     setDocumentContent: (state, action) => {
       state.documentContent = action.payload;
     },
+    setOnlineUsers: (state, action) => {
+      state.users = action.payload;
+    },
   },
 });
 
-export const { setDocumentId, setDocumentMetadata, setDocumentContent } =
-  editorSlice.actions;
+export const {
+  setDocumentId,
+  setDocumentMetadata,
+  setDocumentContent,
+  setOnlineUsers,
+} = editorSlice.actions;
 export default editorSlice.reducer;

@@ -27,12 +27,19 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ["persist/PERSIST"], // Ignore actions from redux-persist
+        ignoredActions: ["persist/PERSIST", "persist/PURGE"], // Ignore actions from redux-persist
         ignoredPaths: ["register"], // Ignore the register path specifically
       },
     }),
 });
 
 const persistor = persistStore(store);
+
+const persistFlag = true;
+
+// If persistFlag is false, do not persist the state
+if (!persistFlag) {
+  persistor.purge(); // Clears persisted state and disables persistence
+}
 
 export { store, persistor };

@@ -10,8 +10,15 @@ const Header = ({
   logo = "#E97777",
   light = "#FFFAD7",
   dark = "#E97777",
+  usersList = [],
 }) => {
   const documentId = useSelector((state) => state.editor.documentId);
+  const username = useSelector((state) => state.user.username);
+  // const users = useSelector((state) => state.editor.users);
+
+  // const initialOnlineUsers = users;
+
+  // const [usersList, setUsersList] = useState(initialOnlineUsers);
 
   const [documentName, setDocumentName] = useState(documentNameProp);
   const [documentNameInputWidth, setDocumentNameInputWidth] = useState(
@@ -113,34 +120,24 @@ const Header = ({
                 </h2>
                 <div className={`py-2`}>
                   <h3>People currently active</h3>
-                  <div className={`flex items-center gap-3 my-3`}>
-                    <div
-                      className={`w-[${iconWidth}] h-[${iconHeight}] flex items-center justify-center text-black font-bold rounded-full cursor-pointer`}
-                      style={{
-                        backgroundColor: "green",
-                        width: iconWidth,
-                        height: iconHeight,
-                      }}
-                    >
-                      A
+                  {usersList?.map((user, index) => (
+                    <div key={index} className={`flex items-center gap-3 my-3`}>
+                      <div
+                        className={`w-[${iconWidth}] h-[${iconHeight}] flex items-center justify-center text-black font-bold rounded-full cursor-pointer`}
+                        style={{
+                          backgroundColor: "green",
+                          width: iconWidth,
+                          height: iconHeight,
+                        }}
+                      >
+                        {String(user ? user[0] : "A").toUpperCase()}
+                      </div>
+                      <h4 className={`text-lg`}>
+                        {String(user ? user : "Ankit Tamboli")}{" "}
+                        {user === username ? "(you)" : ""}
+                      </h4>
                     </div>
-                    <h4 className={`text-lg`}>
-                      Ankit Tamboli {0 === 0 ? "(you)" : ""}
-                    </h4>
-                  </div>
-                  <div className={`flex items-center gap-3 my-3`}>
-                    <div
-                      className={`w-[${iconWidth}] h-[${iconHeight}] flex items-center justify-center text-black font-bold rounded-full cursor-pointer`}
-                      style={{
-                        backgroundColor: "green",
-                        width: iconWidth,
-                        height: iconHeight,
-                      }}
-                    >
-                      A
-                    </div>
-                    <h4 className={`text-lg`}>Ankit Tamboli</h4>
-                  </div>
+                  ))}
                 </div>
 
                 <div className={`py-2`}>
@@ -181,12 +178,25 @@ const Header = ({
                 width: iconWidth,
                 height: iconHeight,
               }}
+              onClick={() => {
+                alert("Storage has been purged!");
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = "/";
+              }}
             >
-              A
+              {String(username ? username[0] : "A").toUpperCase()}
             </div>
           </>
         ) : (
-          <div className=" border-2 border-black rounded-full cursor-pointer">
+          <div
+            className=" border-2 border-black rounded-full cursor-pointer"
+            onClick={() => {
+              alert("Storage has been purged!");
+              localStorage.clear();
+              sessionStorage.clear();
+            }}
+          >
             <UserRound />
           </div>
         )}

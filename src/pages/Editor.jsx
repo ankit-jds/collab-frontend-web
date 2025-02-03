@@ -8,6 +8,7 @@ import useWebSocket from "../hooks/useWebSocket";
 import {
   setDocumentContent,
   setDocumentMetadata,
+  setOnlineUsers,
 } from "../redux/slice/editorSlice";
 
 export const EditorPage = () => {
@@ -15,6 +16,9 @@ export const EditorPage = () => {
 
   const documentId = useSelector((state) => state.editor.documentId);
   const documentName = useSelector((state) => state.editor.documentName);
+  const users = useSelector((state) => state.editor.users);
+  const username = useSelector((state) => state.user.username);
+
   const documentContent = useSelector((state) => state.editor.documentContent);
   const {
     data: documentData,
@@ -52,8 +56,10 @@ export const EditorPage = () => {
 
   // const storedValue = localStorage.getItem("content");
   const initialContentState = documentContent;
+  const initialOnlineUsers = users;
 
   const [content, setContent] = useState(initialContentState);
+  const [usersList, setUsersList] = useState(initialOnlineUsers);
   const inputRef = useRef(null);
 
   const deltasValue = localStorage.getItem("delta");
@@ -74,17 +80,27 @@ export const EditorPage = () => {
   //   ? `ws://192.168.1.16:8420/ws/document/${documentId}/`
   //   : null;
   useEffect(() => {
-    if (documentId)
+    if (documentId && username)
       setWsurl(
-        documentId ? `ws://192.168.1.16:8420/ws/document/${documentId}/` : null
+        documentId && username
+          ? `ws://192.168.1.16:8420/ws/document/${documentId}/${username}/`
+          : null
       );
-  }, [documentId]);
+  }, [documentId, username]);
 
   const { isConnected, sendMessage } = useWebSocket(wsurl, {
     onOpen: () => console.log("websocket connected"),
     onClose: () => console.log("websocket disconnected"),
     onMessage: (message) => {
       try {
+        console.log("456456", message);
+
+        if (message?.type === "update_users") {
+          const users = message?.users;
+
+          setUsersList(users);
+        }
+
         if (Array.isArray(message)) {
           function setTextHelper(prev, message) {
             prev = [(undefined, null, 0)].includes(prev) === true ? "" : prev;
@@ -100,7 +116,15 @@ export const EditorPage = () => {
 
             return prev;
           }
+          const caretPosition = inputRef.current.selectionStart;
+          console.log(caretPosition, "herehere..");
+
           setContent((prev) => setTextHelper(prev, message));
+
+          // Use a setTimeout to ensure the caret position is updated after the re-render
+          setTimeout(() => {
+            inputRef.current.setSelectionRange(caretPosition, caretPosition);
+          }, 0);
         }
         console.log(message, "mesese");
 
@@ -157,6 +181,12 @@ export const EditorPage = () => {
       dispatch(setDocumentContent(content));
     }
   }, [content, documentContent, dispatch]);
+
+  useEffect(() => {
+    if (usersList !== users) {
+      dispatch(setOnlineUsers(usersList));
+    }
+  }, [usersList, users, dispatch]);
 
   const handleChange = (e) => {
     const newValue = e.target.value;
@@ -237,7 +267,7 @@ export const EditorPage = () => {
           // boxShadow: "10px 10px 20px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <Header documentNameProp={documentName} />
+        <Header documentNameProp={documentName} usersList={usersList} />
       </div>
       <div className="relative h-full flex flex-col">
         {isConnected ? (
