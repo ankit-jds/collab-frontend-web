@@ -83,8 +83,9 @@ export const EditorPage = () => {
     if (documentId && username)
       setWsurl(
         documentId && username
-          ? `ws://192.168.1.16:8420/ws/document/${documentId}/${username}/`
-          : null
+          ? `wss://collab-backend-y1yn.onrender.com/ws/document/${documentId}/${username}/`
+          : // `ws://192.168.1.16:8420/ws/document/${documentId}/${username}/`
+            null
       );
   }, [documentId, username]);
 
