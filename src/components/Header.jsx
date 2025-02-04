@@ -141,7 +141,14 @@ const Header = ({
                 </div>
 
                 <div className={`py-2`}>
-                  <h3 className={`font-semibold text-xl`}>QR Code</h3>
+                  <h3 className={` `}>
+                    <span className="font-semibold text-xl">QR Code </span>
+                    <br></br>(
+                    <span className="font-normal text-base italic">
+                      Scan the QR code to log in on your mobile
+                    </span>
+                    )
+                  </h3>
                   <div className={`flex items-center gap-3 my-3`}>
                     <h4 className={`text-lg`}>
                       {FetchQRCodeLoading ? (

@@ -9,8 +9,8 @@ export const LoginPage = () => {
 
   return (
     <div className="">
-      <div className="flex">
-        <div className="overflow-hidden flex justify-center items-center">
+      <div className="flex flex-col md:flex-row min-h-screen items-center">
+        <div className="overflow-hidden hidden md:flex  justify-center items-center">
           <img
             className="w-auto h-dvh"
             src={hero}
@@ -18,7 +18,7 @@ export const LoginPage = () => {
             alt={"hero"}
           ></img>
         </div>
-        <div className="flex flex-col justify-center w-1/2 mx-auto px-32 mb-20">
+        <div className="flex-1 flex flex-col justify-center items-center md:items-start w-full md:w-1/2 mx-auto px-12 md:px-32 mb-20">
           <div className="font-mono font-bold text-5xl mb-20">Login</div>
           <div className="flex flex-col w-full mx-auto gap-2">
             <input

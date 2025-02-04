@@ -10,6 +10,7 @@ import {
   setDocumentMetadata,
   setOnlineUsers,
 } from "../redux/slice/editorSlice";
+import { Loading } from "../components/Loading";
 
 export const EditorPage = () => {
   const dispatch = useDispatch();
@@ -252,7 +253,8 @@ export const EditorPage = () => {
   if (FetchDocumentLoading) return <div>Fetching Document...</div>;
   if (fetchDocumentError)
     return <div>Error in Fetching Document: {fetchDocumentError.message}</div>;
-  if (createDocumentLoading) return <div>Creating Document...</div>;
+  if (createDocumentLoading)
+    return <Loading loadingText="Creating Document..." />;
   // colors
   var text_area_enabled = "#FFFAD7";
   var text_area_disabled = "#FCDDB0";
