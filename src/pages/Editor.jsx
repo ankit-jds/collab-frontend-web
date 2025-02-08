@@ -256,10 +256,10 @@ export const EditorPage = () => {
   if (createDocumentLoading)
     return <Loading loadingText="Creating Document..." />;
   // colors
-  var text_area_enabled = "#FFFAD7";
-  var text_area_disabled = "#FCDDB0";
-  var toast = "#E97777";
-  var header = "#FF9F9F";
+  var text_area_enabled = "#ffffff";
+  var text_area_disabled = "#646E78";
+  var toast = "#000000";
+  var header = "#c6d0d3";
   //
   return (
     <div className="flex flex-col h-lvh" style={{ backgroundColor: header }}>
@@ -270,28 +270,38 @@ export const EditorPage = () => {
           // boxShadow: "10px 10px 20px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <Header documentNameProp={documentName} usersList={usersList} />
+        <Header documentNameProp={documentName} usersList={usersList} isConnected={isConnected}/>
       </div>
       <div className="relative h-full flex flex-col">
         {isConnected ? (
           ""
         ) : (
           <div
-            className="w-max inline p-2 text-black rounded self-center absolute"
-            style={{ backgroundColor: toast }}
+            className="w-max inline p-2 rounded self-center absolute"
+            style={{ backgroundColor: toast, color: text_area_enabled }}
           >
             Trying to reconnect🔄
           </div>
         )}
         <div className="flex-grow p-10 pt-4">
+          <style>
+            {`
+          .editor-textarea::placeholder {
+            color: ${
+              isConnected ? "black" : "white"
+            }; 
+          }
+        `}
+          </style>
           <textarea
-            className={`h-full w-full border p-2 resize-none rounded ${
+            className={`editor-textarea h-full w-full border p-2 resize-none rounded ${
               isConnected ? "" : ""
             }`}
             style={{
               backgroundColor: isConnected
                 ? text_area_enabled
                 : text_area_disabled,
+              color: isConnected ? "black" : "white",
             }}
             type="text"
             value={content}

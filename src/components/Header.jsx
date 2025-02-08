@@ -7,10 +7,11 @@ import { useSelector } from "react-redux";
 
 const Header = ({
   documentNameProp = "Testing",
-  logo = "#E97777",
-  light = "#FFFAD7",
+  logo = "#626D58",
+  light = "#f0f0f0",
   dark = "#E97777",
   usersList = [],
+  isConnected = false,
 }) => {
   const documentId = useSelector((state) => state.editor.documentId);
   const username = useSelector((state) => state.user.username);
@@ -58,7 +59,7 @@ const Header = ({
         ></img>
       ) : (
         <div
-          className="flex-shrink-0 border-2 border-black cursor-pointer"
+          className="flex-shrink-0 border-2 border-black "
           style={{ backgroundColor: logo }}
         >
           <AlignLeft />
@@ -106,9 +107,16 @@ const Header = ({
         {0 === 0 ? (
           <>
             <div
-              className={`text-black font-bold p-1 px-2 rounded cursor-pointer`}
-              style={{ backgroundColor: light }}
-              onClick={openModal}
+              className={`text-black font-bold p-1 px-2 rounded`}
+              style={{
+                backgroundColor: light,
+                cursor: isConnected ? "pointer" : "not-allowed",
+              }}
+              onClick={() => {
+                if (isConnected) {
+                  openModal();
+                }
+              }}
             >
               SHARE
             </div>
@@ -172,12 +180,12 @@ const Header = ({
                 </div> */}
               </div>
             </Modal>
-            <div
+            {/* <div
               className={`bg-[#0c9696] p-1.5 rounded-full h-[${iconHeight}] w-[${iconWidth}] flex justify-center items-center cursor-pointer`}
               style={{ backgroundColor: light }}
             >
               <UserRoundPlus />
-            </div>
+            </div> */}
             <div
               className={`w-[${iconWidth}] h-[${iconHeight}] flex items-center justify-center text-black font-bold bg-green-800 rounded-full cursor-pointer`}
               style={{
