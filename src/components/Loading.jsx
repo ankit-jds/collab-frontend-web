@@ -141,7 +141,7 @@ export const Loading = ({ loadingText = "Loading..." }) => {
       {/* <div onClick={() => dispatch(navigateTo("editor"))}>GO TO EDITOR</div> */}
       <div className="loading-animation-wrapper">
         <div
-          className={`bg-[#c6d0d3] rounded-md relative`}
+          className={`bg-[#c6d0d3] rounded-md relative  transform sm:scale-100 scale-[0.7]`}
           style={{
             width: tableWidth,
             height: tableHeight,

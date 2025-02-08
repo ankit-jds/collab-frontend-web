@@ -1,12 +1,18 @@
 import { useDispatch } from "react-redux";
+import { useState } from "react";
+
 import { transitionTo } from "../redux/slice/navigatorSlice";
 import { hero } from "../assets";
+import Modal from "../components/Modal";
 
 export const LoginPage = () => {
   const dispatch = useDispatch();
   // const background = "#123123";
   // const { mutate, isLoading, isError, error, isSuccess } = useCreateDocument();
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   return (
     <div className="">
       <div className="flex flex-col md:flex-row min-h-screen items-center">
@@ -87,6 +93,48 @@ export const LoginPage = () => {
           </div>
         </div>
       </div>
+
+      <Modal show={isModalOpen} onClose={closeModal}>
+        <div className={`p-5`} style={{ width: "400px" }}>
+          <h2 className={`font-semibold text-xl`}></h2>
+          <div className={`py-2`}>
+            <h3>
+              {/* <p style={{ textAlign: "justify" }}>
+                I built this <strong>realtime collaboration tool</strong> (like
+                Google Docs) to explore how{" "}
+                <strong>realtime communication</strong> works at scale.
+                <br />
+                
+                The goal was to learn about <strong>WebSockets</strong>,
+                managing <strong>Redis</strong> for high performance, and
+                tackling challenges like <strong>data synchronization</strong>{" "}
+                and <strong>latency</strong>.
+                <br />
+                This project reflects my curiosity for solving{" "}
+                <strong>complex problems</strong> and my drive to understand the
+                tech behind <strong>seamless user experiences</strong>.
+                <br />
+                It’s been a great learning journey, and I’m excited to bring
+                these skills to new challenges.
+                <br />
+                Thanks for checking it out!
+              </p> */}
+
+              <p style={{ textAlign: "justify" }}>
+                I built this <strong>realtime collaboration tool</strong> (like
+                Google Docs) to explore <strong>realtime communication</strong>{" "}
+                at scale, learning about <strong>WebSockets</strong>, managing{" "}
+                <strong>Redis</strong> for performance, and tackling challenges
+                like <strong>data synchronization</strong> and{" "}
+                <strong>latency</strong>. This project reflects my drive to
+                solve <strong>complex problems</strong> and create{" "}
+                <strong>seamless user experiences</strong>, and I’m excited to
+                bring these skills to new challenges.
+              </p>
+            </h3>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
