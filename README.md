@@ -15,4 +15,5 @@ first create redux store => configureStore
 then create slice actions reducers
 
 for routing using activeComponent and redux strategy without using any routes
+
  
